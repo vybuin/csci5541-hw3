@@ -69,7 +69,7 @@ def convert_df_to_dataset(df_train: pd.DataFrame,
     # TODO: Convert each DataFrame to a Hugging Face Dataset
     
     # TODO: Combine them into a single DatasetDict
-    
+    dataset_dict = {}
     return dataset_dict
 
 def compute_metrics(eval_pred):
