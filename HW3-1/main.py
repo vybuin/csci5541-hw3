@@ -200,7 +200,7 @@ def decide_train_size(pd_train,
 
     # TODO: To fill
     if train_size >= len(pd_train):
-        return pd.train.reset_index(drop=True)
+        return pd_train.reset_index(drop=True)
     
     subset = pd_train.sample(n=train_size, random_state = 42)
     return subset.reset_index(drop=True)
