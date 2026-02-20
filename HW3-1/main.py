@@ -15,7 +15,6 @@ from transformers import (
     Trainer
 )
 
-
 def load_model_and_tokenizer(model_name:str="distilbert-base-uncased", 
                              num_labels:int=2):
     """
@@ -68,6 +67,9 @@ def convert_df_to_dataset(df_train: pd.DataFrame,
         dataset_dict: Dataset with train, validation, test split
     """
     # TODO: Convert each DataFrame to a Hugging Face Dataset
+    df_train = df_train.reset_index(drop=True)
+    df_valid = df_valid.reset_index(drop=True)
+
     train_ds = Dataset.from_pandas(df_train)
     valid_ds = Dataset.from_pandas(df_valid)
 
@@ -211,9 +213,12 @@ def get_accuracy(list_gt: np.array,
     Input: A list of ground truth labels, and a list of predicted labels
     Task: Calculate the accuracy of the model based on the ground truth label list
     """
-
     # TODO: To fill
-    return 0.0
+    gt = np.asarray(list_gt) 
+    pred = np.asarray(list_pred)
+    if gt.size == 0:
+        return 0.0
+    return float((gt == pred).mean())
 
 def plot_result(plot_name:str) -> None:
     """
