@@ -52,7 +52,8 @@ def tokenize_function(tokenizer,
         Tokenized output
     """
     # TODO: return tokenized output
-    return None
+    texts = examples.get("sentence")
+    return tokenizer(texts, padding="max_length", truncation=True)
 
 def convert_df_to_dataset(df_train: pd.DataFrame, 
                           df_valid: pd.DataFrame) -> DatasetDict:
@@ -67,9 +68,15 @@ def convert_df_to_dataset(df_train: pd.DataFrame,
         dataset_dict: Dataset with train, validation, test split
     """
     # TODO: Convert each DataFrame to a Hugging Face Dataset
-    
+    train_ds = Dataset.from_pandas(df_train)
+    valid_ds = Dataset.from_pandas(df_valid)
+
     # TODO: Combine them into a single DatasetDict
-    dataset_dict = {}
+    dataset_dict = DatasetDict({
+        "train": train_ds,
+        "validation": valid_ds
+    })
+
     return dataset_dict
 
 def compute_metrics(eval_pred):
@@ -175,6 +182,7 @@ def predict_sentiment(tokenizer, model,
         predicted class
     """
     # TODO: Tokenize the input text
+    inputs = tokenizer(text, padding="max_length", truncation=True, return_tensors="pt")
 
     # TODO: Get model output
         
@@ -191,7 +199,11 @@ def decide_train_size(pd_train,
     """
 
     # TODO: To fill
-    return pd_train
+    if train_size >= len(pd_train):
+        return pd.train.reset_index(drop=True)
+    
+    subset = pd_train.sample(n=train_size, random_state = 42)
+    return subset.reset_index(drop=True)
 
 def get_accuracy(list_gt: np.array, 
                  list_pred: np.array):
@@ -268,7 +280,7 @@ if __name__ == "__main__":
         # Load training, valid, and test dataset as polars dataframe
         pl_train = pl.read_json(os.path.join(args.file_folder, 'TrainingData.json')).to_pandas()
         pl_train = decide_train_size(pl_train, args.train_size)         # setting training size
-        pl_valid = pl.read_json(os.path.join(args.file_folder, 'TestingData.json')).to_pandas()
+        pl_valid = pl.read_json(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
 
         # Create dataset dictionary
         dataset = convert_df_to_dataset(pl_train, pl_valid)
