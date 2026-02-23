@@ -12,6 +12,6 @@ To generate the required dataset files locally, you can either:
 ```bash
 python load_data.py
 ```
-2. Or open load_data.py in your IDE (e.g., VS Code) and press the Run button.
+2. Or open `load_data.py` in your IDE (e.g., VS Code) and press the Run button.
 
 This script downloads the DeepfakeTextDetect dataset from Hugging Face (yaful/DeepfakeTextDetect), converts it into the required JSON format, and saves the files into the ./data/ directory.
