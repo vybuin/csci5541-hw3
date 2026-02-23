@@ -183,15 +183,18 @@ def predict_sentiment(tokenizer, model,
     Return:
         predicted class
     """
-    # TODO: Tokenize the input text
+    # DONE: Tokenize the input text
     inputs = tokenizer(text, padding="max_length", truncation=True, return_tensors="pt")
 
-    # TODO: Get model output
-        
-    # TODO: Get the predicted class ID
-    
-    # TODO: Return prediction
-    return 0
+    # DONE: Get model output
+    model.eval() #set model to evaluation mode
+    with torch.no_grad():
+        outputs = model(**inputs) #forward operation to get the logits
+
+    # DONE: Get the predicted class ID
+    predict_class_id = torch.argmax(outputs.logits, dim=-1).item() #get the ind of the highest logit
+    # DONE: Return prediction
+    return int(predict_class_id)
 
 def decide_train_size(pd_train,
                       train_size:int) -> pd.DataFrame:
@@ -220,7 +223,7 @@ def get_accuracy(list_gt: np.array,
         return 0.0
     return float((gt == pred).mean())
 
-def plot_result(plot_name:str) -> None:
+def plot_result(plot_name:str, data:dict) -> None:
     """
     Input: Decide on the input that will be relevant to completing the task
     Task: Using a library like matplotlib, you must create two plots:
@@ -235,12 +238,15 @@ def plot_result(plot_name:str) -> None:
         Plot 3 (Learnig Rate): Create a line graph with
             X-axis: training data size (e.g., 0.0001, 0.001, 0.01); minimum of 3 different  learning rates required
             Y-axis: validation accuracy (i.e., accuracy on validation set) and test accuracy (i.e., accuracy on test set)
-            Save as: per_learning_rate.png
-        
+            Save as: per_learning_rate.png   
     """
 
-    # TODO: To fill
-    pass
+    # TODO: To fill (NOT DONE, need to decide on the input data strucrure)
+    import matplotlib.pyplot as plt
+    x_axis = data["x"]
+    y_axis_valid = data["y_val_acc"]
+    y_axis_test = data["y_test_acc"]
+
 
 def test(model_name:str, model_dir:str,
          pl_data: pl.DataFrame):
