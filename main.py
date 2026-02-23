@@ -1,3 +1,8 @@
+"""
+DistilBERT model from Hugging Face
+https://huggingface.co/docs/transformers/en/model_doc/distilbert
+"""
+
 import os
 import argparse
 from typing import List, Union
@@ -50,7 +55,7 @@ def tokenize_function(tokenizer,
     Return:
         Tokenized output
     """
-    # TODO: return tokenized output
+    # DONE: return tokenized output
     texts = examples.get("sentence")
     return tokenizer(texts, padding="max_length", truncation=True)
 
@@ -66,14 +71,14 @@ def convert_df_to_dataset(df_train: pd.DataFrame,
     Return:
         dataset_dict: Dataset with train, validation, test split
     """
-    # TODO: Convert each DataFrame to a Hugging Face Dataset
+    # DONE: Convert each DataFrame to a Hugging Face Dataset
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
 
     train_ds = Dataset.from_pandas(df_train)
     valid_ds = Dataset.from_pandas(df_valid)
 
-    # TODO: Combine them into a single DatasetDict
+    # DONE: Combine them into a single DatasetDict
     dataset_dict = DatasetDict({
         "train": train_ds,
         "validation": valid_ds
@@ -193,6 +198,7 @@ def predict_sentiment(tokenizer, model,
 
     # DONE: Get the predicted class ID
     predict_class_id = torch.argmax(outputs.logits, dim=-1).item() #get the ind of the highest logit
+
     # DONE: Return prediction
     return int(predict_class_id)
 
@@ -202,8 +208,7 @@ def decide_train_size(pd_train,
     Input: The full training dataset and a target train_size (e.g., 400)
     Task: This function must return a subset of the original dataset containing exactly train_size samples.
     """
-
-    # TODO: To fill
+    # DONE: To fill
     if train_size >= len(pd_train):
         return pd_train.reset_index(drop=True)
     
@@ -216,7 +221,7 @@ def get_accuracy(list_gt: np.array,
     Input: A list of ground truth labels, and a list of predicted labels
     Task: Calculate the accuracy of the model based on the ground truth label list
     """
-    # TODO: To fill
+    # DONE: To fill
     gt = np.asarray(list_gt) 
     pred = np.asarray(list_pred)
     if gt.size == 0:
@@ -240,13 +245,25 @@ def plot_result(plot_name:str, data:dict) -> None:
             Y-axis: validation accuracy (i.e., accuracy on validation set) and test accuracy (i.e., accuracy on test set)
             Save as: per_learning_rate.png   
     """
+    import os
+    import matplotlib.pyplot as plt
 
     # TODO: To fill (NOT DONE, need to decide on the input data strucrure)
-    import matplotlib.pyplot as plt
     x_axis = data["x"]
     y_axis_valid = data["y_val_acc"]
     y_axis_test = data["y_test_acc"]
 
+    # input data dict will look like this?
+    # data = {
+    #     "x": list_model_names, 
+    #     "y_val_acc": list_valid_score,
+    #     "y_test_acc": list_test_score
+    # }
+
+    out_dir = os.path.dirname("./plots")
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+        
 
 def test(model_name:str, model_dir:str,
          pl_data: pl.DataFrame):
@@ -350,7 +367,14 @@ if __name__ == "__main__":
             # Visualize the score per model
             # TODO: Add lines to map the model folder names to be something representing the x axis of the plot
             # TODO: or do something to your local folder in the first place?
-            plot_result(args.plot_name)
+
+            data = {
+                "x": list_model_names,
+                "y_val_acc": list_valid_score,
+                "y_test_acc": list_test_score
+            }
+
+            plot_result(args.plot_name, data)
 
     else:
         print("Need to select either train or test option.")
