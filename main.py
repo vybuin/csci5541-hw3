@@ -333,9 +333,9 @@ if __name__ == "__main__":
 
     if args.train:
         # Load training, valid, and test dataset as polars dataframe
-        pl_train = pl.read_json(os.path.join(args.file_folder, 'TrainingData.json')).to_pandas()
+        pl_train = pl.read_ndjson(os.path.join(args.file_folder, 'TrainingData.json')).to_pandas()
         pl_train = decide_train_size(pl_train, args.train_size)         # setting training size
-        pl_valid = pl.read_json(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
+        pl_valid = pl.read_ndjson(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
 
         # Create dataset dictionary
         dataset = convert_df_to_dataset(pl_train, pl_valid)
@@ -366,8 +366,8 @@ if __name__ == "__main__":
         print(f"Sentence: '{neg_sentence}' -> Sentiment: {predict_sentiment(tokenizer, model, neg_sentence)}")
 
     elif args.test:
-        pl_valid = pl.read_json(os.path.join(args.file_folder, 'ValidationData.json'))
-        pl_test = pl.read_json(os.path.join(args.file_folder, 'TestingData.json'))
+        pl_valid = pl.read_ndjson(os.path.join(args.file_folder, 'ValidationData.json'))
+        pl_test = pl.read_ndjson(os.path.join(args.file_folder, 'TestingData.json'))
 
         if args.best_model_name:
             # If best_model_name argument is given, then append that to the path and run the test mode
