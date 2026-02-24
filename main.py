@@ -246,24 +246,55 @@ def plot_result(plot_name:str, data:dict) -> None:
             Save as: per_learning_rate.png   
     """
     import os
+    import re
     import matplotlib.pyplot as plt
 
     # TODO: To fill (NOT DONE, need to decide on the input data strucrure)
-    x_axis = data["x"]
+    x_axis = data["x"] 
     y_axis_valid = data["y_val_acc"]
     y_axis_test = data["y_test_acc"]
 
-    # input data dict will look like this?
+    # input data dict will look like this
     # data = {
     #     "x": list_model_names, 
     #     "y_val_acc": list_valid_score,
     #     "y_test_acc": list_test_score
     # }
+    
+    out_dir = "./plots"
+    os.makedirs(out_dir, exist_ok=True)
 
-    out_dir = os.path.dirname("./plots")
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-        
+    # plot 1: epochs
+    # extract epoch number from list_model_names
+    epochs = []
+    for name in x_axis:
+        match = re.search(r"\d+", str(name))
+        if match:
+            epochs.append(int(match.group()))
+        else:
+            epochs.append(0)
+
+    # sort by epoch number
+    sorted_idx = np.argsort(epochs)
+    sorted_epochs = [epochs[i] for i in sorted_idx]
+    sorted_y_axis_valid = [y_axis_valid[i] for i in sorted_idx]
+    sorted_y_axis_test = [y_axis_test[i] for i in sorted_idx]
+
+    plt.figure()
+    plt.plot(sorted_epochs, sorted_y_axis_valid, label='Validation Accuracy')
+    plt.plot(sorted_epochs, sorted_y_axis_test, label='Test Accuracy')
+    plt.xlabel("Number of Epochs")
+    plt.ylabel("Validation Accuracy")
+    plt.title("Accuracy vs. Number of Epochs")
+    plt.xticks(sorted_epochs)
+    plt.legend()
+    plt.savefig(os.path.join(out_dir, "per_epoch.png"))
+    plt.close()
+
+    # plot 2: training data size
+
+    # plot 3: learning rate
+
 
 def test(model_name:str, model_dir:str,
          pl_data: pl.DataFrame):
