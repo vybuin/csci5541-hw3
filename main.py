@@ -284,7 +284,7 @@ def plot_result(plot_name:str, data:dict) -> None:
     plt.plot(sorted_epochs, sorted_y_axis_valid, label='Validation Accuracy')
     plt.plot(sorted_epochs, sorted_y_axis_test, label='Test Accuracy')
     plt.xlabel("Number of Epochs")
-    plt.ylabel("Validation Accuracy")
+    plt.ylabel("Accuracy")
     plt.title("Accuracy vs. Number of Epochs")
     plt.xticks(sorted_epochs)
     plt.legend()
@@ -292,9 +292,57 @@ def plot_result(plot_name:str, data:dict) -> None:
     plt.close()
 
     # plot 2: training data size
+    train_sizes = []
+    for name in x_axis:
+        match = re.search(r"\d+", str(name))
+        if match:
+            train_sizes.append(int(match.group()))
+        else:
+            train_sizes.append(0)
+    
+    # sort by training size
+    sorted_idx = np.argsort(train_sizes)
+    sorted_sizes = [train_sizes[i] for i in sorted_idx]
+    sorted_y_axis_valid = [y_axis_valid[i] for i in sorted_idx]
+    sorted_y_axis_test = [y_axis_test[i] for i in sorted_idx]
+
+    plt.figure()
+    plt.plot(sorted_sizes, sorted_y_axis_valid, label='Validation Accuracy')
+    plt.plot(sorted_sizes, sorted_y_axis_test, label='Test Accuracy')
+    plt.xlabel("Training Data Size")
+    plt.ylabel("Accuracy")
+    plt.title("Accuracy vs. Training Data Size")
+    plt.xticks(sorted_sizes)
+    plt.legend()
+    plt.savefig(os.path.join(out_dir, "per_size.png"))
+    plt.close()
 
     # plot 3: learning rate
+    learning_rates = []
+    for name in x_axis:
+        match = re.search(r"\d+", str(name))
+        if match:
+            learning_rates.append(int(match.group()))
+        else:
+            learning_rates.append(0)
+    
+    # sort by training size
+    sorted_idx = np.argsort(learning_rates)
+    sorted_lrs = [learning_rates[i] for i in sorted_idx]
+    sorted_y_axis_valid = [y_axis_valid[i] for i in sorted_idx]
+    sorted_y_axis_test = [y_axis_test[i] for i in sorted_idx]
 
+    plt.figure()
+    plt.plot(sorted_lrs, sorted_y_axis_valid, label='Validation Accuracy')
+    plt.plot(sorted_lrs, sorted_y_axis_test, label='Test Accuracy')
+    plt.xlabel("Learning Rate")
+    plt.ylabel("Accuracy")
+    plt.title("Accuracy vs. Training Data Size")
+    plt.xticks(sorted_lrs)
+    plt.legend()
+    plt.savefig(os.path.join(out_dir, "per_learning_rate.png"))
+    plt.close()
+    
 
 def test(model_name:str, model_dir:str,
          pl_data: pl.DataFrame):
