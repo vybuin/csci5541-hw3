@@ -129,7 +129,7 @@ def train_model(model,
         per_device_eval_batch_size=8,    # Batch size for evaluation
         logging_dir=logging_dir,         # Directory for to store logs
         logging_steps=50,                # Log every 50 steps
-        eval_strategy="epoch",           # Run evaluation at the end of each epoch
+        evaluation_strategy="epoch",           # Run evaluation at the end of each epoch
         save_strategy="epoch",           # Save the model at the end of each epoch
         load_best_model_at_end=True,     # Load the best model found during training
     )
@@ -246,103 +246,51 @@ def plot_result(plot_name:str, data:dict) -> None:
             Save as: per_learning_rate.png   
     """
     import os
-    import re
     import matplotlib.pyplot as plt
 
-    # TODO: To fill (NOT DONE, need to decide on the input data strucrure)
+    # DONE: To fill
     x_axis = data["x"] 
     y_axis_valid = data["y_val_acc"]
-    y_axis_test = data["y_test_acc"]
+    #y_axis_test = data["y_test_acc"] DOESNT NEED TEST ACCURACY FOR THE PLOT
 
     # input data dict will look like this
     # data = {
     #     "x": list_model_names, 
     #     "y_val_acc": list_valid_score,
-    #     "y_test_acc": list_test_score
     # }
-    
+
     out_dir = "./plots"
     os.makedirs(out_dir, exist_ok=True)
 
-    # plot 1: epochs
-    # extract epoch number from list_model_names
-    epochs = []
-    for name in x_axis:
-        match = re.search(r"\d+", str(name))
-        if match:
-            epochs.append(int(match.group()))
-        else:
-            epochs.append(0)
+    if plot_name == "epoch":
+        xlabel = "Epochs"
+        out_file = "per_epoch.png"
 
-    # sort by epoch number
-    sorted_idx = np.argsort(epochs)
-    sorted_epochs = [epochs[i] for i in sorted_idx]
-    sorted_y_axis_valid = [y_axis_valid[i] for i in sorted_idx]
-    sorted_y_axis_test = [y_axis_test[i] for i in sorted_idx]
+    elif plot_name == "size":
+        xlabel = "Training Data Size"
+        out_file = "per_size.png"
 
-    plt.figure()
-    plt.plot(sorted_epochs, sorted_y_axis_valid, label='Validation Accuracy')
-    plt.plot(sorted_epochs, sorted_y_axis_test, label='Test Accuracy')
-    plt.xlabel("Number of Epochs")
-    plt.ylabel("Accuracy")
-    plt.title("Accuracy vs. Number of Epochs")
-    plt.xticks(sorted_epochs)
-    plt.legend()
-    plt.savefig(os.path.join(out_dir, "per_epoch.png"))
-    plt.close()
+    elif plot_name == "lr" or plot_name == "learning_rate":
+        xlabel = "Learning Rate"
+        out_file = "per_learning_rate.png"
 
-    # plot 2: training data size
-    train_sizes = []
-    for name in x_axis:
-        match = re.search(r"\d+", str(name))
-        if match:
-            train_sizes.append(int(match.group()))
-        else:
-            train_sizes.append(0)
-    
-    # sort by training size
-    sorted_idx = np.argsort(train_sizes)
-    sorted_sizes = [train_sizes[i] for i in sorted_idx]
-    sorted_y_axis_valid = [y_axis_valid[i] for i in sorted_idx]
-    sorted_y_axis_test = [y_axis_test[i] for i in sorted_idx]
+    else:
+        xlabel = "x"
+        out_file = "plot.png"
 
     plt.figure()
-    plt.plot(sorted_sizes, sorted_y_axis_valid, label='Validation Accuracy')
-    plt.plot(sorted_sizes, sorted_y_axis_test, label='Test Accuracy')
-    plt.xlabel("Training Data Size")
-    plt.ylabel("Accuracy")
-    plt.title("Accuracy vs. Training Data Size")
-    plt.xticks(sorted_sizes)
-    plt.legend()
-    plt.savefig(os.path.join(out_dir, "per_size.png"))
+    plt.plot(x_axis, y_axis_valid, label="Validation Accuracy", marker="o")
+    plt.xlabel(xlabel)
+    plt.ylabel("Validation Accuracy")
+    plt.title(f"Validation Accuracy vs {xlabel}")
+    plt.xticks(x_axis)
+    plt.xscale("log")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(os.path.join(out_dir, out_file))
     plt.close()
+    print(f"Saved {out_file}")
 
-    # plot 3: learning rate
-    learning_rates = []
-    for name in x_axis:
-        match = re.search(r"\d+", str(name))
-        if match:
-            learning_rates.append(int(match.group()))
-        else:
-            learning_rates.append(0)
-    
-    # sort by training size
-    sorted_idx = np.argsort(learning_rates)
-    sorted_lrs = [learning_rates[i] for i in sorted_idx]
-    sorted_y_axis_valid = [y_axis_valid[i] for i in sorted_idx]
-    sorted_y_axis_test = [y_axis_test[i] for i in sorted_idx]
-
-    plt.figure()
-    plt.plot(sorted_lrs, sorted_y_axis_valid, label='Validation Accuracy')
-    plt.plot(sorted_lrs, sorted_y_axis_test, label='Test Accuracy')
-    plt.xlabel("Learning Rate")
-    plt.ylabel("Accuracy")
-    plt.title("Accuracy vs. Training Data Size")
-    plt.xticks(sorted_lrs)
-    plt.legend()
-    plt.savefig(os.path.join(out_dir, "per_learning_rate.png"))
-    plt.close()
-    
 
 def test(model_name:str, model_dir:str,
          pl_data: pl.DataFrame):
@@ -373,7 +321,7 @@ if __name__ == "__main__":
                         help='Name of the folder to save all models')
     parser.add_argument('--best_model_name',
                         help='Name of the folder to save the best model')
-    parser.add_argument('--plot_name', default='./test.png',
+    parser.add_argument('--plot_name', default='./test.png', #change to ./plots.png??, check hw3 instrctions
                         help='Name of the plot')
     
     parser.add_argument('--train', action='store_true',
@@ -445,12 +393,22 @@ if __name__ == "__main__":
 
             # Visualize the score per model
             # TODO: Add lines to map the model folder names to be something representing the x axis of the plot
-            # TODO: or do something to your local folder in the first place?
+            # DONE: or do something to your local folder in the first place?
+
+            #convert folder names like epoch_10/size_400/lr_0.001 -> numeric x values for the plot
+            x_vals = []
+            for name in list_model_names:
+                #take the last chunk after underscore
+                x_vals.append(float(name.split("_")[-1]))
+
+            #sort by x so the line chart is ordered
+            order = np.argsort(np.array(x_vals))
+            x_sorted = list(np.array(x_vals)[order])
+            val_sorted = list(np.array(list_valid_score)[order])
 
             data = {
-                "x": list_model_names,
-                "y_val_acc": list_valid_score,
-                "y_test_acc": list_test_score
+                "x": x_sorted,
+                "y_val_acc": val_sorted,
             }
 
             plot_result(args.plot_name, data)
