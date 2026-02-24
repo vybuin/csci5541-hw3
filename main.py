@@ -129,7 +129,7 @@ def train_model(model,
         per_device_eval_batch_size=8,    # Batch size for evaluation
         logging_dir=logging_dir,         # Directory for to store logs
         logging_steps=50,                # Log every 50 steps
-        evaluation_strategy="epoch",           # Run evaluation at the end of each epoch
+        eval_strategy="epoch",           # Run evaluation at the end of each epoch
         save_strategy="epoch",           # Save the model at the end of each epoch
         load_best_model_at_end=True,     # Load the best model found during training
     )
@@ -190,6 +190,8 @@ def predict_sentiment(tokenizer, model,
     """
     # DONE: Tokenize the input text
     inputs = tokenizer(text, padding="max_length", truncation=True, return_tensors="pt")
+    device = next(model.parameters()).device
+    inputs = {k: v.to(device) for k, v in inputs.items()}
 
     # DONE: Get model output
     model.eval() #set model to evaluation mode
@@ -336,6 +338,9 @@ if __name__ == "__main__":
         pl_train = pl.read_ndjson(os.path.join(args.file_folder, 'TrainingData.json')).to_pandas()
         pl_train = decide_train_size(pl_train, args.train_size)         # setting training size
         pl_valid = pl.read_ndjson(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
+        
+        #Add the line below for testing purposes to make training fatser
+        #pl_valid = pl_valid.sample(n=200, random_state=42).reset_index(drop=True) 
 
         # Create dataset dictionary
         dataset = convert_df_to_dataset(pl_train, pl_valid)

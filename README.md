@@ -1,6 +1,23 @@
 # HW3: Finetuning LLMs for text classification
 Fine-tune a pretrained model to perform text classification. You will evaluate how three key factors (training dataset size, number of training epochs, and learning rate) impact the final performance of your model. Then construct the "Best Model" which incorporates the optimal parameters. 
 
+## Installation
+Make sure you have Python 3.11+ installed, then run:
+```bash
+pip install torch
+pip install transformers -U
+pip install accelerate -U
+pip install datasets
+pip install polars
+pip install pandas
+pip install numpy
+pip install matplotlib
+```
+Or install all at once using the requirements.txt:
+```bash
+pip install -r requirements.txt
+```
+
 ## Dataset
 
 The dataset files (`TrainingData.json`, `ValidationData.json`, and `TestingData.json`) are not included in this repository due to their large file size.
