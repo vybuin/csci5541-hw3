@@ -1,5 +1,4 @@
 # HW3: Finetuning LLMs for text classification
-Fine-tune a pretrained model to perform text classification. You will evaluate how three key factors (training dataset size, number of training epochs, and learning rate) impact the final performance of your model. Then construct the "Best Model" which incorporates the optimal parameters. 
 
 ## Installation
 Make sure you have Python 3.11+ installed, then run:
@@ -41,8 +40,8 @@ This script downloads the DeepfakeTextDetect dataset from Hugging Face (yaful/De
 Use the following naming convention for --best_model_name so plots work correctly:
 ### Epoch experiments
 ```bash
-python main.py --train --epoch 1 --model_dir ./models/per_epoch --best_model_name epoch_1
-python main.py --train --epoch 2 --model_dir ./models/per_epoch --best_model_name epoch_2
+python main.py --train --epoch 10 --model_dir ./models/per_epoch --best_model_name epoch_1
+python main.py --train --epoch 11 --model_dir ./models/per_epoch --best_model_name epoch_2
 ```
 
 ### Training size experiments
