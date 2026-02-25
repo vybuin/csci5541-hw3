@@ -56,7 +56,7 @@ def tokenize_function(tokenizer,
     Return:
         Tokenized output
     """
-    # DONE: return tokenized output
+    # Return tokenized output
     texts = examples.get("sentence")
     return tokenizer(texts, truncation=True)
 
@@ -72,14 +72,14 @@ def convert_df_to_dataset(df_train: pd.DataFrame,
     Return:
         dataset_dict: Dataset with train, validation, test split
     """
-    # DONE: Convert each DataFrame to a Hugging Face Dataset
+    # Convert each DataFrame to a Hugging Face Dataset
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
 
     train_ds = Dataset.from_pandas(df_train)
     valid_ds = Dataset.from_pandas(df_valid)
 
-    # DONE: Combine them into a single DatasetDict
+    # Combine them into a single DatasetDict
     dataset_dict = DatasetDict({
         "train": train_ds,
         "validation": valid_ds
@@ -193,20 +193,20 @@ def predict_sentiment(tokenizer, model,
     Return:
         predicted class
     """
-    # DONE: Tokenize the input text
+    # Tokenize the input text
     inputs = tokenizer(text, truncation=True, return_tensors="pt")
     device = next(model.parameters()).device
     inputs = {k: v.to(device) for k, v in inputs.items()}
 
-    # DONE: Get model output
-    model.eval() #set model to evaluation mode
+    # Get model output
+    model.eval() # Set model to evaluation mode
     with torch.no_grad():
-        outputs = model(**inputs) #forward operation to get the logits
+        outputs = model(**inputs) # Forward operation to get the logits
 
-    # DONE: Get the predicted class ID
-    predict_class_id = torch.argmax(outputs.logits, dim=-1).item() #get the ind of the highest logit
+    # Get the predicted class ID
+    predict_class_id = torch.argmax(outputs.logits, dim=-1).item() # Get the ind of the highest logit
 
-    # DONE: Return prediction
+    # Return prediction
     return int(predict_class_id)
 
 def decide_train_size(pd_train,
@@ -215,7 +215,7 @@ def decide_train_size(pd_train,
     Input: The full training dataset and a target train_size (e.g., 400)
     Task: This function must return a subset of the original dataset containing exactly train_size samples.
     """
-    # DONE: To fill
+    # Filled in decide_train_size
     if train_size >= len(pd_train):
         return pd_train.reset_index(drop=True)
     
@@ -228,7 +228,7 @@ def get_accuracy(list_gt: np.array,
     Input: A list of ground truth labels, and a list of predicted labels
     Task: Calculate the accuracy of the model based on the ground truth label list
     """
-    # DONE: To fill
+    # Filled in get_accuracy
     gt = np.asarray(list_gt) 
     pred = np.asarray(list_pred)
     if gt.size == 0:
@@ -255,7 +255,6 @@ def plot_result(plot_name:str, data:dict) -> None:
     import os
     import matplotlib.pyplot as plt
 
-    # DONE: To fill
     x_axis = data["x"] 
     y_axis_valid = data["y_val_acc"]
     #y_axis_test = data["y_test_acc"] DOESNT NEED TEST ACCURACY FOR THE PLOT
@@ -328,7 +327,7 @@ if __name__ == "__main__":
                         help='Name of the folder to save all models')
     parser.add_argument('--best_model_name',
                         help='Name of the folder to save the best model')
-    parser.add_argument('--plot_name', default='./test.png', #change to ./plots.png??, check hw3 instrctions
+    parser.add_argument('--plot_name', default='./test.png', # change to ./plots.png??, check hw3 instrctions
                         help='Name of the plot')
     
     parser.add_argument('--train', action='store_true',
@@ -344,7 +343,7 @@ if __name__ == "__main__":
         pl_train = decide_train_size(pl_train, args.train_size)         # setting training size
         pl_valid = pl.read_ndjson(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
 
-        #Add the line below for testing purposes to make training fatser
+        # Add the line below for testing purposes to make training fatser
         #pl_valid = pl_valid.sample(n=200, random_state=42).reset_index(drop=True) 
 
         # Create dataset dictionary
@@ -405,13 +404,13 @@ if __name__ == "__main__":
             # TODO: Add lines to map the model folder names to be something representing the x axis of the plot
             # DONE: or do something to your local folder in the first place?
 
-            #convert folder names like epoch_10/size_400/lr_0.001 -> numeric x values for the plot
+            # Convert folder names like epoch_10/size_400/lr_0.001 -> numeric x values for the plot
             x_vals = []
             for name in list_model_names:
-                #take the last chunk after underscore
+                # Take the last chunk after underscore
                 x_vals.append(float(name.split("_")[-1]))
 
-            #sort by x so the line chart is ordered
+            # Sort by x so the line chart is ordered
             order = np.argsort(np.array(x_vals))
             x_sorted = list(np.array(x_vals)[order])
             val_sorted = list(np.array(list_valid_score)[order])
