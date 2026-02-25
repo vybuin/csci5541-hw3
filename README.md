@@ -40,8 +40,8 @@ This script downloads the DeepfakeTextDetect dataset from Hugging Face (yaful/De
 Use the following naming convention for --best_model_name so plots work correctly:
 ### Epoch experiments
 ```bash
-python main.py --train --epoch 10 --model_dir ./models/per_epoch --best_model_name epoch_10
-python main.py --train --epoch 11 --model_dir ./models/per_epoch --best_model_name epoch_11
+python main.py --train --file_folder ./data --epoch 10 --model_dir ./models/per_epoch --best_model_name epoch_10
+python main.py --train --file_folder ./data --epoch 11 --model_dir ./models/per_epoch --best_model_name epoch_11
 ```
 
 ### Training size experiments
