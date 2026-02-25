@@ -6,7 +6,7 @@ Dataset: https://huggingface.co/datasets/yaful/DeepfakeTextDetectLinks to an ext
 
 from datasets import load_dataset
 
-ds = load_dataset("yaful/DeepfakeTextDetect", trust_remote_code=True)
+ds = load_dataset("yaful/DeepfakeTextDetect")
 
 def normalize(example):
     return {
