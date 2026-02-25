@@ -33,6 +33,10 @@ python load_data.py
 
 This script downloads the DeepfakeTextDetect dataset from Hugging Face (yaful/DeepfakeTextDetect), converts it into the required JSON format, and saves the files into the ./data/ directory.
 
+## Implementation Notes
+- **Batch size**: Set to 16(default was 8) for faster training. This does not affect experimental validity since it is not a controlled variable.
+- **Padding**: Uses `DataCollatorWithPadding` instead of `padding="max_length"` for dynamic padding to reduce training time.
+
 ## Running Experiments
 Use the following naming convention for --best_model_name so plots work correctly:
 ### Epoch experiments

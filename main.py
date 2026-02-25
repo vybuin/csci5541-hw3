@@ -17,7 +17,8 @@ from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
     TrainingArguments,
-    Trainer
+    Trainer,
+    DataCollatorWithPadding,
 )
 
 def load_model_and_tokenizer(model_name:str="distilbert-base-uncased", 
@@ -57,7 +58,7 @@ def tokenize_function(tokenizer,
     """
     # DONE: return tokenized output
     texts = examples.get("sentence")
-    return tokenizer(texts, padding="max_length", truncation=True)
+    return tokenizer(texts, truncation=True)
 
 def convert_df_to_dataset(df_train: pd.DataFrame, 
                           df_valid: pd.DataFrame) -> DatasetDict:
@@ -105,7 +106,7 @@ def compute_metrics(eval_pred):
     
     return {"accuracy": accuracy}
 
-def train_model(model,
+def train_model(model, tokenizer,
                 train_dataset, valid_dataset,
                 num_epochs: int,
                 learning_rate: float,
@@ -125,8 +126,8 @@ def train_model(model,
         output_dir=output_dir,           # Directory to save the model
         num_train_epochs=num_epochs,     # Total number of training epochs
         learning_rate=learning_rate,     # Learning rate
-        per_device_train_batch_size=8,   # Batch size for training
-        per_device_eval_batch_size=8,    # Batch size for evaluation
+        per_device_train_batch_size=16,   # Batch size for training
+        per_device_eval_batch_size=16,    # Batch size for evaluation
         logging_dir=logging_dir,         # Directory for to store logs
         logging_steps=50,                # Log every 50 steps
         eval_strategy="epoch",           # Run evaluation at the end of each epoch
@@ -141,6 +142,7 @@ def train_model(model,
         train_dataset=train_dataset,
         eval_dataset=valid_dataset,
         compute_metrics=compute_metrics,
+        data_collator = DataCollatorWithPadding(tokenizer=tokenizer),
     )
 
     # Start training
@@ -173,6 +175,9 @@ def load_model(model_dir:str,
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSequenceClassification.from_pretrained(model_dir)
 
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    model = model.to(device)
+
     return tokenizer, model
 
 def predict_sentiment(tokenizer, model,
@@ -189,7 +194,7 @@ def predict_sentiment(tokenizer, model,
         predicted class
     """
     # DONE: Tokenize the input text
-    inputs = tokenizer(text, padding="max_length", truncation=True, return_tensors="pt")
+    inputs = tokenizer(text, truncation=True, return_tensors="pt")
     device = next(model.parameters()).device
     inputs = {k: v.to(device) for k, v in inputs.items()}
 
@@ -338,7 +343,7 @@ if __name__ == "__main__":
         pl_train = pl.read_ndjson(os.path.join(args.file_folder, 'TrainingData.json')).to_pandas()
         pl_train = decide_train_size(pl_train, args.train_size)         # setting training size
         pl_valid = pl.read_ndjson(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
-        
+
         #Add the line below for testing purposes to make training fatser
         #pl_valid = pl_valid.sample(n=200, random_state=42).reset_index(drop=True) 
 
@@ -358,7 +363,7 @@ if __name__ == "__main__":
         print(f"Using {len(train_dataset)} samples for training and {len(valid_dataset)} for validation.")
 
         # Training the model
-        train_model(model=model,
+        train_model(model=model, tokenizer=tokenizer,
                     train_dataset=train_dataset, valid_dataset=valid_dataset,
                     num_epochs=args.epoch, learning_rate=args.learning_rate,
                     output_dir=args.model_dir, bestmodel_dir=(args.best_model_name or 'mybestmodel'))
