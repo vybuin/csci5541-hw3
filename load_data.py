@@ -1,12 +1,12 @@
 """
 Option 4
 Task: Human vs. AI text detection
-Dataset: https://huggingface.co/datasets/yaful/DeepfakeTextDetectLinks to an external site.
+Dataset: https://huggingface.co/datasets/yaful/DeepfakeTextDetect to an external site.
 """
 
 from datasets import load_dataset
 
-ds = load_dataset("yaful/DeepfakeTextDetect")
+ds = load_dataset("yaful/MAGE")
 
 def normalize(example):
     return {
