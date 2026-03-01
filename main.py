@@ -344,7 +344,7 @@ if __name__ == "__main__":
         pl_valid = pl.read_ndjson(os.path.join(args.file_folder, 'ValidationData.json')).to_pandas()
 
         # Add the line below for testing purposes to make training fatser
-        #pl_valid = pl_valid.sample(n=200, random_state=42).reset_index(drop=True) 
+        pl_valid = pl_valid.sample(n=2000, random_state=42).reset_index(drop=True) 
 
         # Create dataset dictionary
         dataset = convert_df_to_dataset(pl_train, pl_valid)
