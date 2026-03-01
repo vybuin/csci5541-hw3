@@ -1,7 +1,7 @@
 # HW3: Finetuning LLMs for text classification
 
 ## Installation
-Make sure you have Python 3.11+ installed, then run:
+Make sure Python 3.11+ is installed, then run:
 ```bash
 pip install torch
 pip install transformers -U
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 ## Dataset
 The dataset files (`TrainingData.json`, `ValidationData.json`, and `TestingData.json`) are not included in this repository due to their large file size.
 
-To generate the required dataset files locally, you can either:
+Here are two options to generate the required dataset files locally:
 
 1. Run the following command in the terminal:
 
@@ -34,14 +34,14 @@ This script downloads the DeepfakeTextDetect dataset from Hugging Face (yaful/De
 ## Implementation Notes
 - **Batch size**: The batch size was set to 16 (default was 8) for faster training. This does not affect experimental validity since it is not a controlled variable.
 - **Validation size**: The validation size was set to 2000 for faster training. This was done to reduce per-epoch evaluation time while maintaining sufficient sample size.
-- **Padding**: We used `DataCollatorWithPadding` instead of `padding="max_length"` for dynamic padding to reduce training time.
+- **Padding**: `DataCollatorWithPadding` was used instead of `padding="max_length"` for dynamic padding to reduce training time.
 
 ## Running Experiments
 Use the following naming convention for --best_model_name so plots work correctly:
 ### Epoch experiments
 ```bash
-python main.py --train --file_folder ./data --epoch 10 --model_dir ./models/per_epoch --best_model_name epoch_10
-python main.py --train --file_folder ./data --epoch 11 --model_dir ./models/per_epoch --best_model_name epoch_11
+python main.py --train --file_folder ./data --epoch 1 --model_dir ./models/per_epoch --best_model_name epoch_1
+python main.py --train --file_folder ./data --epoch 2 --model_dir ./models/per_epoch --best_model_name epoch_2
 ```
 
 ### Training size experiments
@@ -52,8 +52,8 @@ python main.py --train --file_folder ./data --epoch 4 --train_size 100 --model_d
 
 ### Learning rate experiments
 ```bash
-python main.py --train --file_folder ./data --epoch 4 --learning_rate 0.0001 --model_dir ./models/per_lr --best_model_name lr_0.0001
-python main.py --train --file_folder ./data --epoch 4 --learning_rate 0.001 --model_dir ./models/per_lr --best_model_name lr_0.001
+python main.py --train --file_folder ./data --epoch 4 --learning_rate 0.00001 --model_dir ./models/per_lr --best_model_name lr_0.00001
+python main.py --train --file_folder ./data --epoch 4 --learning_rate 0.00002 --model_dir ./models/per_lr --best_model_name lr_0.00002
 ```
 
 ## General Testing & Plotting
