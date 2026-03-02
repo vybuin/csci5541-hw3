@@ -393,12 +393,11 @@ if __name__ == "__main__":
 
                 valid_accuracy = test(model_name=args.model_name, model_dir=model_dir,
                                       pl_data=pl_valid)
-                test_accuracy = test(model_name=args.model_name, model_dir=model_dir,
-                                     pl_data=pl_test)
+                #test_accuracy = test(model_name=args.model_name, model_dir=model_dir, pl_data=pl_test)
                 
                 list_model_names.append(md)
                 list_valid_score.append(valid_accuracy)
-                list_test_score.append(test_accuracy)
+                #list_test_score.append(test_accuracy)
 
             # Visualize the score per model
             # TODO: Add lines to map the model folder names to be something representing the x axis of the plot
