@@ -58,7 +58,8 @@ python main.py --train --file_folder ./data --epoch 4 --learning_rate 0.00002 --
 
 ## General Testing & Plotting
 ```bash
-python main.py --test --model_dir ./models/per_epoch --plot_name epoch
-python main.py --test --model_dir ./models/per_size --plot_name size
-python main.py --test --model_dir ./models/per_lr --plot_name lr
+python main.py model_name distilbert-base-uncased --file_folder ./data --model_dir ./models/per_epoch --plot_name epoch --test
+python main.py model_name distilbert-base-uncased --file_folder ./data --model_dir ./models/per_size --plot_name size --test
+python main.py model_name distilbert-base-uncased --file_folder ./data --model_dir ./models/per_lr --plot_name lr --test
+python main.py file_folder ./data --model_dir ./best_model --best_model_name final_model --test
 ```
