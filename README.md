@@ -1,4 +1,4 @@
-# HW3: Finetuning LLMs for text classification
+# HW4: Generating and evaluating text
 
 ## Installation
 Make sure Python 3.11+ is installed, then run:
