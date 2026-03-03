@@ -18,6 +18,7 @@ pip install -r requirements.txt
 ```
 
 ## Dataset
+The [DeepfakeTextDetect dataset](https://huggingface.co/datasets/yaful/MAGE) from Hugging Face was used.
 The dataset files (`TrainingData.json`, `ValidationData.json`, and `TestingData.json`) are not included in this repository due to their large file size.
 
 Here are two options to generate the required dataset files locally:
