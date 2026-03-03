@@ -384,6 +384,18 @@ if __name__ == "__main__":
             model_dir = os.path.join(args.model_dir, args.best_model_name)
             test_accuracy = test(model_name=args.model_name, model_dir=model_dir,
                                  pl_data=pl_test)
+            # Evaluate on validation set
+            valid_accuracy = test(model_name=args.model_name,
+                                model_dir=model_dir,
+                                pl_data=pl_valid)
+            # Evaluate on test set
+            test_accuracy = test(model_name=args.model_name,
+                                model_dir=model_dir,
+                                pl_data=pl_test)
+            print("\nFinal Model Results")
+            print(f"Validation accuracy: {valid_accuracy:.4f}")
+            print(f"Test accuracy:       {test_accuracy:.4f}\n")
+            
         else:
             list_model_names = []
             list_valid_score = []
