@@ -291,6 +291,7 @@ def plot_result(plot_name:str, data:dict) -> None:
     plt.title(f"Validation Accuracy vs {xlabel}")
     plt.xticks(x_axis)
     plt.xscale("log")
+    plt.ylim(0, 1)
     plt.grid(True)
     plt.tight_layout()
     plt.savefig(os.path.join(out_dir, out_file))
