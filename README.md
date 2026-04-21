@@ -1,4 +1,4 @@
-# HW3: Finetuning LLMs for Text Classification
+# Finetuning LLMs for Text Classification
 
 ## Installation
 Make sure Python 3.11+ is installed, then run:
